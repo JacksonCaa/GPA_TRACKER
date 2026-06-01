@@ -10,6 +10,7 @@
   <meta name="theme-color" content="#1f2937">
   <link rel="manifest" href="manifest.json">
   <title>ICE TECH</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>body { margin: 0; padding: 0; background: linear-gradient(180deg, #0f172a 0%, #0b1120 40%, #111827 100%); }</style>
   <link rel="stylesheet" href="styles.css">
   <style>
@@ -92,12 +93,43 @@
     <p class="loader-text">Đang tải...</p>
   </div>
   <div class="container">
-    <!-- Header -->
-    <div class="header">
-      <div class="badge">ĐẠI HỌC THỦY LỢI - TLU</div>
-      <h1>GPA Tracker</h1>
-      <div class="sub" id="user-info">MSSV: 26612/1194 · <span id="year-display" style="cursor:pointer;text-decoration:underline;" onclick="editYearAcademic()">2025-2026</span></div>
-      <button id="logout-btn" class="logout-btn" onclick="logout()" style="display:none;">Đăng xuất</button>
+    <!-- Header with Gear Background -->
+    <div class="header" style="position: relative; overflow: hidden; min-height: 280px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 30px; border-radius: 24px; background: linear-gradient(135deg, rgba(15,65,150,0.95), rgba(20,50,130,0.9)); backdrop-filter: blur(10px); border: 1px solid rgba(59,130,246,0.2);">
+      <!-- Gear Background Pattern -->
+      <svg style="position: absolute; top: -60px; left: -80px; width: 400px; height: 400px; opacity: 0.12;" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <g>
+          <circle cx="100" cy="100" r="70" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle cx="100" cy="100" r="50" fill="none" stroke="currentColor" stroke-width="2"/>
+          <g stroke="currentColor" stroke-width="1.5">
+            <path d="M 100 30 L 95 50 L 105 50 Z"/>
+            <path d="M 170 100 L 150 95 L 150 105 Z"/>
+            <path d="M 100 170 L 105 150 L 95 150 Z"/>
+            <path d="M 30 100 L 50 105 L 50 95 Z"/>
+          </g>
+        </g>
+      </svg>
+      <svg style="position: absolute; bottom: -40px; right: -100px; width: 380px; height: 380px; opacity: 0.1;" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <g>
+          <circle cx="100" cy="100" r="75" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle cx="100" cy="100" r="50" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <g stroke="currentColor" stroke-width="1.5">
+            <path d="M 100 25 L 94 45 L 106 45 Z"/>
+            <path d="M 175 100 L 155 94 L 155 106 Z"/>
+            <path d="M 100 175 L 106 155 L 94 155 Z"/>
+            <path d="M 25 100 L 45 106 L 45 94 Z"/>
+          </g>
+        </g>
+      </svg>
+
+      <!-- Content -->
+      <div style="position: relative; z-index: 2; text-align: center;">
+        <div class="badge" style="margin-bottom: 14px;">ĐẠI HỌC THỦY LỢI - TLU</div>
+        <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(28px, 6vw, 42px); font-weight: 800; background: linear-gradient(135deg, #ffffff, #a0d9ff); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0 0 8px 0; letter-spacing: -0.5px;">GPA TRACKER</h1>
+        <p style="font-family: 'Poppins', sans-serif; font-size: clamp(14px, 3vw, 18px); color: #06b6d4; font-weight: 600; letter-spacing: 1px; margin: 0; text-transform: uppercase;">Kiến Tạo Tương Lai</p>
+      </div>
+
+      <div class="sub" id="user-info" style="position: relative; z-index: 2; margin-top: 18px; font-size: clamp(12px, 2vw, 14px);">MSSV: 26612/1194 · <span id="year-display" style="cursor:pointer;text-decoration:underline;" onclick="editYearAcademic()">2025-2026</span></div>
+      <button id="logout-btn" class="logout-btn" onclick="logout()" style="display:none; position: relative; z-index: 2; margin-top: 12px;">Đăng xuất</button>
     </div>
 
     <!-- Tabs -->
@@ -335,6 +367,7 @@
     </div>
   </div>
 
+  <script src="theme.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
