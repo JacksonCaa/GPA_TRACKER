@@ -242,10 +242,29 @@ function handleLogin(event) {
 }
 
 // ==================== CHECK LOGIN ====================
-window.addEventListener('load', () => {
+function initLoginSplash() {
+  const splash = document.getElementById('splash-screen');
+  const loginContainer = document.getElementById('login-container');
+  if (!splash || !loginContainer) return;
+
+  loginContainer.style.display = 'none';
+  splash.classList.remove('hide');
+
+  setTimeout(() => {
+    splash.classList.add('hide');
+    setTimeout(() => {
+      splash.style.display = 'none';
+      loginContainer.style.display = 'flex';
+    }, 600);
+  }, 1600);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
   if (window.location.pathname.includes('login.html')) {
     if (localStorage.getItem('currentUser')) {
       window.location.href = 'index.html';
+      return;
     }
+    initLoginSplash();
   }
 });

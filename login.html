@@ -280,6 +280,70 @@
       text-align: center;
     }
 
+    .splash-screen {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(15,23,42,1) 0%, rgba(17,24,39,0.95) 60%, rgba(17,24,39,0.9) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 18px;
+      z-index: 9999;
+      opacity: 1;
+      transition: opacity 0.6s ease;
+    }
+
+    .splash-screen.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .splash-logo {
+      width: 140px;
+      height: 140px;
+      border-radius: 34px;
+      background: radial-gradient(circle at 30% 30%, rgba(56,189,248,0.95), transparent 45%),
+                  linear-gradient(135deg, rgba(59,130,246,0.9), rgba(139,92,246,0.85));
+      box-shadow: 0 32px 80px rgba(59,130,246,0.18);
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .splash-logo::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.18), transparent 42%);
+    }
+
+    .splash-logo span {
+      position: relative;
+      color: white;
+      font-size: 44px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      text-shadow: 0 10px 35px rgba(0,0,0,0.25);
+    }
+
+    .splash-text {
+      color: var(--text-secondary);
+      text-align: center;
+      font-size: 14px;
+      letter-spacing: 0.7px;
+      opacity: 0.9;
+    }
+
+    .login-container {
+      display: none;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-primary);
+    }
+
     @media (max-width: 600px) {
       .login-box {
         padding: 28px 20px;
@@ -292,7 +356,14 @@
   </style>
 </head>
 <body>
-  <div class="login-container">
+  <div class="splash-screen" id="splash-screen">
+    <div class="splash-logo"><span>ICE</span></div>
+    <div>
+      <h2 style="margin:0;font-size:26px;color:white;letter-spacing:0.08em;">ICE TECH</h2>
+      <p class="splash-text">Chào mừng đến GPA Tracker</p>
+    </div>
+  </div>
+  <div class="login-container" id="login-container">
     <div class="login-wrapper">
       <div class="login-box">
         <div class="login-header">

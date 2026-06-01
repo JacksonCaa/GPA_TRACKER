@@ -407,4 +407,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('chat-input').addEventListener('keydown', e => {
     if (e.key === 'Enter') sendMessage();
   });
+
+  hideAppLoader();
 });
+
+function hideAppLoader() {
+  const loader = document.getElementById('app-loader');
+  if (loader) {
+    setTimeout(() => {
+      loader.classList.add('fade-out');
+      setTimeout(() => {
+        loader.style.display = 'none';
+      }, 800);
+    }, 300);
+  }
+}

@@ -1,13 +1,96 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" style="background: linear-gradient(180deg, #0f172a 0%, #0b1120 40%, #111827 100%); margin: 0; padding: 0;">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="GPA Tracker - Đại học Thủy Lợi TLU. Theo dõi điểm, tính GPA, tra cứu quy chế.">
-  <title>GPA Tracker - ĐH Thủy Lợi</title>
+  <meta name="application-name" content="ICE TECH">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="ICE TECH">
+  <meta name="theme-color" content="#1f2937">
+  <link rel="manifest" href="manifest.json">
+  <title>ICE TECH</title>
+  <style>body { margin: 0; padding: 0; background: linear-gradient(180deg, #0f172a 0%, #0b1120 40%, #111827 100%); }</style>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    .app-loader {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(15,23,42,1) 0%, rgba(17,24,39,0.95) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 20px;
+      z-index: 10000;
+      opacity: 1;
+      transition: opacity 0.8s ease-out;
+    }
+
+    .app-loader.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loader-logo {
+      width: 120px;
+      height: 120px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, rgba(59,130,246,0.9), rgba(139,92,246,0.85));
+      box-shadow: 0 32px 80px rgba(59,130,246,0.2);
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .loader-logo span {
+      position: relative;
+      color: white;
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      text-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      animation: logoGlow 1.8s ease-in-out infinite;
+    }
+
+    @keyframes logoGlow {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.15); text-shadow: 0 8px 40px rgba(59,130,246,0.4); }
+    }
+
+    .loader-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid rgba(255,255,255,0.15);
+      border-top-color: var(--accent-cyan);
+      border-radius: 50%;
+      animation: spin 1.2s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loader-text {
+      color: var(--text-secondary);
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      animation: textBlink 1.6s ease-in-out infinite;
+    }
+
+    @keyframes textBlink {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+  </style>
 </head>
 <body>
+  <div class="app-loader" id="app-loader">
+    <div class="loader-logo"><span>ICE</span></div>
+    <div class="loader-spinner"></div>
+    <p class="loader-text">Đang tải...</p>
+  </div>
   <div class="container">
     <!-- Header -->
     <div class="header">
