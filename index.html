@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="GPA Tracker - Đại học Thủy Lợi TLU. Theo dõi điểm, tính GPA, tra cứu quy chế.">
+  <meta name="description" content="ICE TECH - Đại học Thủy Lợi TLU. Theo dõi điểm, tính GPA, tra cứu quy chế.">
   <meta name="application-name" content="ICE TECH">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="ICE TECH">
@@ -34,25 +34,20 @@
     }
 
     .loader-logo {
-      width: 120px;
-      height: 120px;
-      border-radius: 28px;
-      background: linear-gradient(135deg, rgba(59,130,246,0.9), rgba(139,92,246,0.85));
-      box-shadow: 0 32px 80px rgba(59,130,246,0.2);
-      display: grid;
-      place-items: center;
+      width: auto;
+      height: auto;
+      border-radius: 0;
+      background: none;
+      box-shadow: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       position: relative;
-      overflow: hidden;
+      overflow: visible;
     }
 
     .loader-logo span {
-      position: relative;
-      color: white;
-      font-size: 38px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      text-shadow: 0 8px 30px rgba(0,0,0,0.3);
-      animation: logoGlow 1.8s ease-in-out infinite;
+      display: none;
     }
 
     @keyframes logoGlow {
@@ -88,9 +83,22 @@
 </head>
 <body>
   <div class="app-loader" id="app-loader">
-    <div class="loader-logo"><span>ICE</span></div>
+    <div class="loader-logo" style="background: none; box-shadow: none;">
+      <svg width="90" height="90" viewBox="0 0 100 100" style="position: relative; z-index: 2;" xmlns="http://www.w3.org/2000/svg">
+        <!-- Black Fox -->
+        <path d="M50 15 L65 35 L85 30 L75 45 L90 50 L75 55 L85 70 L65 65 L50 85 L35 65 L15 70 L25 55 L10 50 L25 45 L15 30 L35 35 Z" fill="#06b6d4" stroke="none"/>
+        <!-- Ears -->
+        <path d="M35 28 L32 15 L40 25 Z" fill="#06b6d4"/>
+        <path d="M65 28 L68 15 L60 25 Z" fill="#06b6d4"/>
+        <!-- Eyes -->
+        <circle cx="42" cy="45" r="3" fill="#fff"/>
+        <circle cx="58" cy="45" r="3" fill="#fff"/>
+        <!-- Nose -->
+        <path d="M50 52 L48 58 L52 58 Z" fill="#ff6b35"/>
+      </svg>
+    </div>
     <div class="loader-spinner"></div>
-    <p class="loader-text">Đang tải...</p>
+    <p class="loader-text">Loading...</p>
   </div>
   <div class="container">
     <!-- Header with Gear Background -->

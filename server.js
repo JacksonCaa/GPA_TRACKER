@@ -65,7 +65,7 @@ app.post('/api/send-verification', async (req, res) => {
   const code = Math.random().toString(36).substring(2, 8).toUpperCase();
   verificationCodes[email] = { code, timestamp: Date.now(), type };
 
-  const subject = type === 'signup' ? 'Mã xác thực đăng ký GPA Tracker' : 'Mã xác thực đặt lại mật khẩu';
+  const subject = type === 'signup' ? 'Mã xác thực đăng ký ICE TECH' : 'Mã xác thực đặt lại mật khẩu';
   const message = type === 'signup'
     ? `Mã xác thực đăng ký của bạn là: <strong>${code}</strong><br><br>Mã này có hiệu lực trong 10 phút.`
     : `Mã xác thực đặt lại mật khẩu của bạn là: <strong>${code}</strong><br><br>Mã này có hiệu lực trong 10 phút.`;
@@ -76,7 +76,7 @@ app.post('/api/send-verification', async (req, res) => {
       to: email,
       subject,
       html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
-        <h2 style="color:#3b82f6;">GPA Tracker</h2>
+        <h2 style="color:#3b82f6;">ICE TECH</h2>
         <p>${message}</p>
         <p style="color:#999;font-size:12px;margin-top:20px;">Đây là email tự động. Vui lòng không trả lời.</p>
       </div>`

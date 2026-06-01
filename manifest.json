@@ -1,7 +1,7 @@
 {
   "name": "ICE TECH",
   "short_name": "ICE TECH",
-  "description": "GPA Tracker - ICE TECH",
+  "description": "ICE TECH - Quản lý điểm và GPA",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
