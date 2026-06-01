@@ -21,11 +21,12 @@
     }
 
     .login-box {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
+      background: rgba(30, 30, 35, 0.75);
+      border: 1.5px solid rgba(100, 180, 220, 0.4);
       border-radius: 20px;
       padding: 40px 32px;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
     }
 
     .login-header {
@@ -49,9 +50,10 @@
     .login-header h1 {
       font-size: 28px;
       font-weight: 800;
-      background: linear-gradient(135deg, #fff, #94a3b8);
+      background: linear-gradient(135deg, #fff, #b0e0fc);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
 
     .tab-toggle {
@@ -111,20 +113,21 @@
 
     .form-group input {
       width: 100%;
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1.5px solid rgba(100, 180, 220, 0.3);
       border-radius: 12px;
       padding: 12px 14px;
       color: var(--text-primary);
       font-family: inherit;
       font-size: 14px;
       outline: none;
-      transition: border-color 0.3s;
+      transition: border-color 0.3s, background 0.3s;
     }
 
     .form-group input:focus {
-      border-color: var(--accent-blue);
-      background: rgba(59, 130, 246, 0.1);
+      border-color: rgba(100, 180, 220, 0.7);
+      background: rgba(100, 180, 220, 0.12);
+      box-shadow: 0 0 12px rgba(100, 180, 220, 0.2);
     }
 
     .form-group input::placeholder {
@@ -351,17 +354,28 @@
 <body>
   <div class="splash-screen" id="splash-screen">
     <div class="splash-logo" style="background: none; box-shadow: none;">
-      <svg width="100" height="100" viewBox="0 0 100 100" style="position: relative; z-index: 2;" xmlns="http://www.w3.org/2000/svg">
-        <!-- Black Fox -->
-        <path d="M50 15 L65 35 L85 30 L75 45 L90 50 L75 55 L85 70 L65 65 L50 85 L35 65 L15 70 L25 55 L10 50 L25 45 L15 30 L35 35 Z" fill="#1a1a1a" stroke="none"/>
+      <svg width="100" height="100" viewBox="0 0 100 100" style="position: relative; z-index: 2; filter: drop-shadow(0 8px 16px rgba(100, 180, 220, 0.3));" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="iceGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#e0f7ff;stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#a8e6ff;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#64d9ff;stop-opacity:1" />
+          </linearGradient>
+          <filter id="frost">
+            <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="3" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" />
+          </filter>
+        </defs>
+        <!-- Fox Body (Icy Blue) -->
+        <path d="M50 15 L65 35 L85 30 L75 45 L90 50 L75 55 L85 70 L65 65 L50 85 L35 65 L15 70 L25 55 L10 50 L25 45 L15 30 L35 35 Z" fill="url(#iceGrad)" filter="url(#frost)" stroke="rgba(100, 200, 255, 0.6)" stroke-width="0.5"/>
         <!-- Ears -->
-        <path d="M35 28 L32 15 L40 25 Z" fill="#1a1a1a"/>
-        <path d="M65 28 L68 15 L60 25 Z" fill="#1a1a1a"/>
-        <!-- Eyes -->
-        <circle cx="42" cy="45" r="3" fill="#fff"/>
-        <circle cx="58" cy="45" r="3" fill="#fff"/>
-        <!-- Nose -->
-        <path d="M50 52 L48 58 L52 58 Z" fill="#ff6b35"/>
+        <path d="M35 28 L32 15 L40 25 Z" fill="url(#iceGrad)" stroke="rgba(100, 200, 255, 0.6)" stroke-width="0.5"/>
+        <path d="M65 28 L68 15 L60 25 Z" fill="url(#iceGrad)" stroke="rgba(100, 200, 255, 0.6)" stroke-width="0.5"/>
+        <!-- Eyes (Frost) -->
+        <circle cx="42" cy="45" r="3" fill="#e0f7ff" opacity="0.9"/>
+        <circle cx="58" cy="45" r="3" fill="#e0f7ff" opacity="0.9"/>
+        <!-- Nose (Orange accent) -->
+        <path d="M50 52 L48 58 L52 58 Z" fill="#ff8c42"/>
       </svg>
     </div>
     <div>

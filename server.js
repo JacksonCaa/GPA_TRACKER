@@ -10,9 +10,21 @@ app.use(express.json());
 app.use(express.static('.'));
 
 // ==================== DATABASE ====================
+if (!process.env.DATABASE_URL) {
+  console.error('❌ DATABASE_URL is not set! Check your .env file.');
+  console.log('Expected format: postgresql://user:password@host:port/dbname');
+}
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+  ssl: { rejectUnauthorized: false },
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
+});
+
+pool.on('error', (err) => {
+  console.error('❌ Unexpected error on idle client:', err.message);
 });
 
 // Tạo bảng nếu chưa có
