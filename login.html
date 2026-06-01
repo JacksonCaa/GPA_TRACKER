@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng nhập - GPA Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-primary);
+    }
+
+    .login-wrapper {
+      width: 100%;
+      max-width: 420px;
+      padding: 20px;
+    }
+
+    .login-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px 32px;
+      backdrop-filter: blur(10px);
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .login-header .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+      color: white;
+      padding: 6px 20px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .login-header h1 {
+      font-size: 28px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .tab-toggle {
+      display: flex;
+      gap: 0;
+      margin-bottom: 28px;
+      border-bottom: 1px solid var(--border);
+      background: transparent;
+    }
+
+    .tab-toggle button {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 12px;
+      cursor: pointer;
+      position: relative;
+      transition: color 0.3s;
+    }
+
+    .tab-toggle button:hover {
+      color: var(--text-secondary);
+    }
+
+    .tab-toggle button.active {
+      color: var(--accent-cyan);
+    }
+
+    .tab-toggle button.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+      border-radius: 2px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .form-group input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--accent-blue);
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    .form-group input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .form-section {
+      display: none;
+    }
+
+    .form-section.active {
+      display: block;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      color: white;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.3s;
+      margin-top: 8px;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+    }
+
+    .gmail-btn {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .gmail-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: var(--accent-blue);
+    }
+
+    .divider {
+      text-align: center;
+      margin: 16px 0;
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      display: inline-block;
+      width: 45%;
+      height: 1px;
+      background: var(--border);
+      vertical-align: middle;
+      margin: 0 8px;
+    }
+
+    .error-msg {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: var(--accent-red);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .error-msg.show {
+      display: block;
+    }
+
+    .success-msg {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--accent-green);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .success-msg.show {
+      display: block;
+    }
+
+    .verification-box {
+      background: rgba(59, 130, 246, 0.08);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      display: none;
+      text-align: center;
+    }
+
+    .verification-box.show {
+      display: block;
+    }
+
+    .verification-box p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .verification-code {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      color: var(--accent-cyan);
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 2px;
+      text-align: center;
+      margin-bottom: 12px;
+      word-break: break-all;
+    }
+
+    .signup-step {
+      display: none;
+    }
+
+    .signup-step.active {
+      display: block;
+    }
+
+    .info-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 12px;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .login-box {
+        padding: 28px 20px;
+      }
+
+      .login-header h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-wrapper">
+      <div class="login-box">
+        <div class="login-header">
+          <div class="badge">ĐẠI HỌC THỦY LỢI - TLU</div>
+          <h1>GPA Tracker</h1>
+        </div>
+
+        <div class="tab-toggle">
+          <button class="active" onclick="switchLoginTab('login')">Đăng nhập</button>
+          <button onclick="switchLoginTab('signup')">Đăng ký</button>
+        </div>
+
+        <!-- TAB ĐĂNG NHẬP -->
+        <div id="login-form" class="form-section active">
+          <div class="error-msg" id="login-error"></div>
+
+          <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+              <label>Mã Số Sinh Viên (MSV) hoặc Email</label>
+              <input type="text" id="login-msv" placeholder="VD: 26612/1194 hoặc email@gmail.com" required>
+            </div>
+            <div class="form-group">
+              <label>Mật khẩu</label>
+              <input type="password" id="login-password" placeholder="Nhập mật khẩu" required>
+            </div>
+            <button type="submit" class="submit-btn">Đăng nhập</button>
+          </form>
+
+          <div class="info-text">
+            Chưa có tài khoản? <span onclick="switchLoginTab('signup')" style="color:var(--accent-cyan);cursor:pointer;font-weight:600;">Đăng ký tại đây</span>
+            <br><br>
+            <span onclick="switchLoginTab('reset')" style="color:var(--accent-yellow);cursor:pointer;font-weight:600;">Quên mật khẩu?</span>
+          </div>
+        </div>
+
+        <!-- TAB ĐĂNG KÝ -->
+        <div id="signup-form" class="form-section">
+          <div class="error-msg" id="signup-error"></div>
+          <div class="success-msg" id="signup-success"></div>
+
+          <!-- BƯỚC 1: NHẬP THÔNG TIN -->
+          <div id="signup-step1" class="signup-step active">
+            <form onsubmit="handleSignupStep1(event)">
+              <div class="form-group">
+                <label>Mã Số Sinh Viên (MSV)</label>
+                <input type="number" id="signup-msv" placeholder="VD: 2551281132" required>
+              </div>
+              <div class="form-group">
+                <label>Email (để nhận mã xác thực)</label>
+                <input type="email" id="signup-email" placeholder="VD: your.email@gmail.com" required>
+              </div>
+              <div class="form-group">
+                <label>Họ và tên</label>
+                <input type="text" id="signup-name" placeholder="Nhập họ và tên" required>
+              </div>
+              <div class="form-group">
+                <label>Mật khẩu (do bạn đặt)</label>
+                <input type="password" id="signup-password" placeholder="Nhập mật khẩu (ít nhất 8 ký tự, chứa chữ hoa, số & ký tự đặc biệt)" required>
+              </div>
+              <div class="form-group">
+                <label>Xác nhận mật khẩu</label>
+                <input type="password" id="signup-password-confirm" placeholder="Xác nhận mật khẩu" required>
+              </div>
+              <button type="submit" class="submit-btn">Tiếp tục</button>
+            </form>
+          </div>
+
+          <!-- BƯỚC 2: NHẬP MÃ XÁC THỰC + CAPTCHA -->
+          <div id="signup-step2" class="signup-step">
+            <div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:12px;padding:14px;margin-bottom:16px;">
+              <p style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;">
+                ✓ Mã xác thực đã được gửi đến:
+              </p>
+              <p style="font-size:13px;color:var(--accent-cyan);font-weight:700;margin-bottom:12px;" id="email-display"></p>
+              <p style="font-size:11px;color:var(--text-muted);line-height:1.5;">
+                Hãy kiểm tra email của bạn để lấy mã xác thực (nếu không thấy, kiểm tra trong thư mục Spam)
+              </p>
+            </div>
+
+            <form onsubmit="handleSignupStep2(event)">
+              <div class="form-group">
+                <label>Nhập mã xác thực từ email</label>
+                <input type="text" id="signup-code" placeholder="VD: ABC123" maxlength="6" style="text-transform:uppercase;" required>
+              </div>
+
+              <!-- CAPTCHA SIMPLE -->
+              <div class="form-group">
+                <label>Xác minh CAPTCHA: <span id="captcha-question" style="color:var(--accent-blue);font-weight:700;"></span></label>
+                <input type="number" id="captcha-answer" placeholder="Nhập kết quả" required>
+              </div>
+
+              <button type="submit" class="submit-btn">Tạo tài khoản</button>
+              <button type="button" class="submit-btn" style="background:rgba(55,65,81,0.3);margin-top:8px;" onclick="backToSignupStep1()">Quay lại</button>
+            </form>
+          </div>
+
+          <div class="info-text">
+            Đã có tài khoản? <span onclick="switchLoginTab('login')" style="color:var(--accent-cyan);cursor:pointer;font-weight:600;">Đăng nhập tại đây</span>
+          </div>
+        </div>
+
+        <!-- TAB QUÊN MẬT KHẨU -->
+        <div id="reset-form" class="form-section">
+          <div class="error-msg" id="reset-error"></div>
+          <div class="success-msg" id="reset-success"></div>
+
+          <!-- BƯỚC 1: NHẬP EMAIL -->
+          <div id="reset-step1" class="signup-step active">
+            <form onsubmit="handleResetStep1(event)">
+              <div class="form-group">
+                <label>Email đã đăng ký</label>
+                <input type="email" id="reset-email" placeholder="VD: your.email@gmail.com" required>
+              </div>
+              <button type="submit" class="submit-btn">Gửi mã xác thực</button>
+            </form>
+          </div>
+
+          <!-- BƯỚC 2: NHẬP MÃ + MK MỚI -->
+          <div id="reset-step2" class="signup-step">
+            <div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:12px;padding:14px;margin-bottom:16px;">
+              <p style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;">
+                ✓ Mã xác thực đã được gửi đến:
+              </p>
+              <p style="font-size:13px;color:var(--accent-cyan);font-weight:700;" id="reset-email-display"></p>
+            </div>
+
+            <form onsubmit="handleResetStep2(event)">
+              <div class="form-group">
+                <label>Nhập mã xác thực từ email</label>
+                <input type="text" id="reset-code" placeholder="VD: ABC123" maxlength="6" style="text-transform:uppercase;" required>
+              </div>
+
+              <div class="form-group">
+                <label>Mật khẩu mới</label>
+                <input type="password" id="reset-password" placeholder="Ít nhất 8 ký tự, chứa chữ hoa, số & ký tự đặc biệt" required>
+              </div>
+
+              <div class="form-group">
+                <label>Xác nhận mật khẩu</label>
+                <input type="password" id="reset-password-confirm" placeholder="Xác nhận mật khẩu" required>
+              </div>
+
+              <button type="submit" class="submit-btn">Đặt lại mật khẩu</button>
+              <button type="button" class="submit-btn" style="background:rgba(55,65,81,0.3);margin-top:8px;" onclick="backToResetStep1()">Quay lại</button>
+            </form>
+          </div>
+
+          <div class="info-text">
+            <span onclick="switchLoginTab('login')" style="color:var(--accent-cyan);cursor:pointer;font-weight:600;">Quay về đăng nhập</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="login.js"></script>
+</body>
+</html>
