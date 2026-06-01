@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - GPA Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .admin-container {
+      min-height: 100vh;
+      background: var(--bg-primary);
+      padding: 20px;
+    }
+
+    .admin-wrapper {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .admin-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .admin-header h1 {
+      font-size: 32px;
+      color: var(--accent-cyan);
+      margin-bottom: 10px;
+    }
+
+    .admin-tabs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    .admin-tab-btn {
+      background: rgba(59, 130, 246, 0.15);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .admin-tab-btn:hover,
+    .admin-tab-btn.active {
+      background: rgba(59, 130, 246, 0.3);
+      border-color: var(--accent-blue);
+      color: var(--accent-cyan);
+    }
+
+    .admin-content {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 30px;
+      display: none;
+    }
+
+    .admin-content.active {
+      display: block;
+    }
+
+    .admin-section {
+      margin-bottom: 30px;
+    }
+
+    .admin-section h2 {
+      font-size: 18px;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .form-field {
+      margin-bottom: 16px;
+    }
+
+    .form-field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .form-field input,
+    .form-field textarea {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .form-field input:focus,
+    .form-field textarea:focus {
+      border-color: var(--accent-blue);
+    }
+
+    .form-field textarea {
+      resize: vertical;
+      min-height: 120px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .admin-btn-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .admin-btn {
+      flex: 1;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .admin-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .admin-btn.secondary {
+      background: rgba(55, 65, 81, 0.5);
+      border: 1px solid var(--border);
+    }
+
+    .admin-msg {
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      display: none;
+    }
+
+    .admin-msg.show {
+      display: block;
+    }
+
+    .admin-msg.success {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--accent-green);
+    }
+
+    .admin-msg.error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: var(--accent-red);
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+
+    .data-table th {
+      background: rgba(59, 130, 246, 0.1);
+      padding: 10px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-cyan);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .data-table td {
+      padding: 10px;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+    }
+
+    .data-table tr:hover {
+      background: rgba(59, 130, 246, 0.05);
+    }
+
+    .logout-link {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: var(--accent-yellow);
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .logout-link:hover {
+      color: var(--accent-red);
+    }
+
+    @media (max-width: 600px) {
+      .admin-wrapper { padding: 10px; }
+      .admin-content { padding: 20px; }
+      .admin-tabs { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <a class="logout-link" onclick="adminLogout()">🚪 Thoát</a>
+
+  <div class="admin-container">
+    <div class="admin-wrapper">
+      <div class="admin-header">
+        <h1>⚙️ Admin Panel - GPA Tracker</h1>
+        <p style="color: var(--text-muted); font-size: 13px;">Quản lý dữ liệu sinh viên</p>
+      </div>
+
+      <div class="admin-tabs">
+        <button class="admin-tab-btn active" onclick="switchAdminTab('import')">📥 Import Dữ Liệu</button>
+        <button class="admin-tab-btn" onclick="switchAdminTab('export')">📤 Export Dữ Liệu</button>
+        <button class="admin-tab-btn" onclick="switchAdminTab('manage')">📋 Quản Lý Sinh Viên</button>
+      </div>
+
+      <!-- TAB 1: IMPORT -->
+      <div id="tab-import" class="admin-content active">
+        <div class="admin-section">
+          <h2>Import Dữ Liệu Từ JSON</h2>
+          <div class="admin-msg" id="import-msg"></div>
+          
+          <div class="form-field">
+            <label>Dán dữ liệu JSON hoặc chọn file</label>
+            <textarea id="import-textarea" placeholder='[{"email":"user@example.com","msv":"123456","name":"Tên Sinh Viên","password":"Pass@12345"}]'></textarea>
+          </div>
+
+          <div class="form-field">
+            <label>Hoặc tải lên file JSON</label>
+            <input type="file" id="import-file" accept=".json">
+          </div>
+
+          <div class="admin-btn-group">
+            <button class="admin-btn" onclick="importData()">📥 Import</button>
+            <button class="admin-btn secondary" onclick="clearImport()">Xóa</button>
+          </div>
+
+          <div style="margin-top: 20px; padding: 14px; background: rgba(139, 92, 246, 0.1); border-radius: 8px; border-left: 3px solid var(--accent-purple);">
+            <p style="font-size: 12px; color: var(--text-muted); margin: 0;">
+              <strong>Format JSON:</strong><br>
+              Mỗi người dùng phải có: email, msv, name, password
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: EXPORT -->
+      <div id="tab-export" class="admin-content">
+        <div class="admin-section">
+          <h2>Export Dữ Liệu Sang JSON</h2>
+          <div class="admin-msg" id="export-msg"></div>
+          
+          <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px;">
+            Xuất tất cả dữ liệu sinh viên từ database
+          </p>
+
+          <div class="admin-btn-group">
+            <button class="admin-btn" onclick="exportData()">📤 Export Tất Cả</button>
+            <button class="admin-btn secondary" onclick="exportDataCSV()">📊 Export CSV</button>
+          </div>
+
+          <div id="export-preview" style="margin-top: 20px; display: none; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 12px; max-height: 300px; overflow: auto;">
+            <pre id="export-content" style="font-size: 11px; color: var(--accent-cyan); margin: 0;"></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: MANAGE -->
+      <div id="tab-manage" class="admin-content">
+        <div class="admin-section">
+          <h2>Danh Sách Sinh Viên</h2>
+          <div class="admin-msg" id="manage-msg"></div>
+
+          <div style="margin-bottom: 16px;">
+            <input type="text" id="search-input" placeholder="🔍 Tìm kiếm theo email hoặc MSV..." 
+              style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; color: var(--text-primary);">
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Email</th>
+                  <th>MSV</th>
+                  <th>Họ Tên</th>
+                  <th>Hành Động</th>
+                </tr>
+              </thead>
+              <tbody id="users-tbody">
+                <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Đang tải...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = window.location.origin;
+    let allUsers = [];
+
+    // ==================== CHECK ADMIN ====================
+    function checkAdmin() {
+      const adminPass = localStorage.getItem('adminPassword');
+      if (!adminPass) {
+        const pass = prompt('Nhập mật khẩu Admin:');
+        if (pass === 'admin2025') {
+          localStorage.setItem('adminPassword', 'true');
+        } else {
+          alert('Mật khẩu sai!');
+          window.location.href = 'login.html';
+        }
+      }
+    }
+
+    function adminLogout() {
+      localStorage.removeItem('adminPassword');
+      window.location.href = 'login.html';
+    }
+
+    // ==================== TAB SWITCH ====================
+    function switchAdminTab(tab) {
+      document.querySelectorAll('.admin-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.admin-tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(`tab-${tab}`).classList.add('active');
+      event.target.classList.add('active');
+
+      if (tab === 'manage') loadUsers();
+    }
+
+    // ==================== MESSAGES ====================
+    function showMsg(tabId, message, isError = false) {
+      const msg = document.getElementById(`${tabId}-msg`);
+      msg.textContent = isError ? '❌ ' + message : '✓ ' + message;
+      msg.className = `admin-msg show ${isError ? 'error' : 'success'}`;
+      setTimeout(() => msg.classList.remove('show'), 5000);
+    }
+
+    // ==================== IMPORT ====================
+    document.getElementById('import-file')?.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          document.getElementById('import-textarea').value = event.target.result;
+        };
+        reader.readAsText(file);
+      }
+    });
+
+    function clearImport() {
+      document.getElementById('import-textarea').value = '';
+    }
+
+    async function importData() {
+      const data = document.getElementById('import-textarea').value.trim();
+      if (!data) {
+        showMsg('import', 'Vui lòng nhập dữ liệu JSON', true);
+        return;
+      }
+
+      try {
+        const users = JSON.parse(data);
+        if (!Array.isArray(users)) throw new Error('Phải là một mảng JSON');
+
+        let success = 0, failed = 0;
+        for (const user of users) {
+          try {
+            const res = await fetch(`${API_URL}/api/register`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(user)
+            });
+            const result = await res.json();
+            if (result.success) success++;
+            else failed++;
+          } catch (e) {
+            failed++;
+          }
+        }
+
+        showMsg('import', `Import hoàn tất: ${success} thành công, ${failed} thất bại`);
+        clearImport();
+      } catch (e) {
+        showMsg('import', 'JSON không hợp lệ: ' + e.message, true);
+      }
+    }
+
+    // ==================== EXPORT ====================
+    async function exportData() {
+      try {
+        const res = await fetch(`${API_URL}/api/admin/users`);
+        const data = await res.json();
+        
+        if (!data.success) {
+          showMsg('export', 'Không thể tải dữ liệu', true);
+          return;
+        }
+
+        const preview = document.getElementById('export-preview');
+        const content = document.getElementById('export-content');
+        content.textContent = JSON.stringify(data.users, null, 2);
+        preview.style.display = 'block';
+
+        const blob = new Blob([JSON.stringify(data.users, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `gpa-tracker-backup-${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+
+        showMsg('export', 'Tải xuống thành công!');
+      } catch (e) {
+        showMsg('export', 'Lỗi: ' + e.message, true);
+      }
+    }
+
+    function exportDataCSV() {
+      try {
+        const res = fetch(`${API_URL}/api/admin/users`);
+        res.then(r => r.json()).then(data => {
+          if (!data.success) return;
+          
+          let csv = 'Email,MSV,Họ Tên,Ngày Tạo\n';
+          data.users.forEach(u => {
+            csv += `"${u.email}","${u.msv}","${u.name}","${u.created_at}"\n`;
+          });
+
+          const blob = new Blob([csv], { type: 'text/csv' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `gpa-tracker-users-${new Date().toISOString().split('T')[0]}.csv`;
+          a.click();
+
+          showMsg('export', 'Tải xuống CSV thành công!');
+        });
+      } catch (e) {
+        showMsg('export', 'Lỗi: ' + e.message, true);
+      }
+    }
+
+    // ==================== MANAGE ====================
+    async function loadUsers() {
+      try {
+        const res = await fetch(`${API_URL}/api/admin/users`);
+        const data = await res.json();
+        
+        if (!data.success) {
+          showMsg('manage', 'Không thể tải dữ liệu', true);
+          return;
+        }
+
+        allUsers = data.users;
+        renderUsers(allUsers);
+      } catch (e) {
+        showMsg('manage', 'Lỗi: ' + e.message, true);
+      }
+    }
+
+    function renderUsers(users) {
+      const tbody = document.getElementById('users-tbody');
+      if (users.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Không có dữ liệu</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = users.map(u => `
+        <tr>
+          <td>${u.email}</td>
+          <td>${u.msv}</td>
+          <td>${u.name}</td>
+          <td>
+            <button onclick="deleteUser('${u.email}')" style="background: rgba(239,68,68,0.2); color: var(--accent-red); border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 11px;">Xóa</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function deleteUser(email) {
+      if (!confirm('Xác nhận xóa người dùng này?')) return;
+      
+      try {
+        const res = await fetch(`${API_URL}/api/admin/users/${email}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+          showMsg('manage', 'Xóa thành công!');
+          loadUsers();
+        } else {
+          showMsg('manage', 'Lỗi: ' + data.error, true);
+        }
+      } catch (e) {
+        showMsg('manage', 'Lỗi: ' + e.message, true);
+      }
+    }
+
+    document.getElementById('search-input')?.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase();
+      const filtered = allUsers.filter(u => 
+        u.email.toLowerCase().includes(query) || u.msv.toLowerCase().includes(query)
+      );
+      renderUsers(filtered);
+    });
+
+    // ==================== INIT ====================
+    window.addEventListener('load', checkAdmin);
+  </script>
+</body>
+</html>

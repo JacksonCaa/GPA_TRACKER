@@ -188,6 +188,28 @@ app.post('/api/grades/:email', async (req, res) => {
   }
 });
 
+// ==================== ADMIN API ====================
+// Get all users
+app.get('/api/admin/users', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT email, msv, name, created_at FROM users ORDER BY created_at DESC');
+    res.json({ success: true, users: result.rows });
+  } catch (err) {
+    res.status(500).json({ error: 'Lỗi server' });
+  }
+});
+
+// Delete user
+app.delete('/api/admin/users/:email', async (req, res) => {
+  try {
+    await pool.query('DELETE FROM users WHERE email = $1', [req.params.email]);
+    await pool.query('DELETE FROM grades WHERE email = $1', [req.params.email]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Lỗi server' });
+  }
+});
+
 // ==================== START ====================
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

@@ -4,6 +4,7 @@ const API_URL = window.location.origin;
 // ==================== DATA ====================
 let currentYear = 1;
 let gradesByYear = { 1: [], 2: [], 3: [], 4: [] };
+let academicYear = localStorage.getItem('academicYear') || '2025-2026';
 
 // ==================== LOGIN CHECK ====================
 function checkLogin() {
@@ -107,7 +108,7 @@ function renderGradeTable() {
   const yearNames = { 1: 'Nhất', 2: 'Hai', 3: 'Ba', 4: 'Bốn' };
   const titleEl = document.getElementById('grade-title');
 
-  titleEl.textContent = `Chi tiết – Năm ${yearNames[currentYear]} (2025-2026)`;
+  titleEl.textContent = `Chi tiết – Năm ${yearNames[currentYear]} (${academicYear})`;
 
   let totalWeighted10 = 0, totalWeighted4 = 0, totalCredits = 0;
   let failCount = 0, passCredits = 0;
@@ -370,13 +371,28 @@ function escapeHtml(text) {
   return d.innerHTML;
 }
 
+// ==================== CHỈNH SỬA NĂM HỌC ====================
+function editYearAcademic() {
+  const newYear = prompt('Nhập năm học (VD: 2026-2027):', academicYear);
+  if (newYear && newYear.trim()) {
+    academicYear = newYear.trim();
+    localStorage.setItem('academicYear', academicYear);
+    document.getElementById('year-display').textContent = academicYear;
+    renderGradeTable();
+  }
+}
+
 // ==================== INIT ====================
 document.addEventListener('DOMContentLoaded', async () => {
   if (!checkLogin()) return;
 
   const userData = getCurrentUserData();
   if (userData) {
-    document.getElementById('user-info').textContent = `${userData.name} · MSV: ${userData.msv}`;
+    document.getElementById('user-info').textContent = `${userData.name} · MSV: ${userData.msv} · `;
+    const yearSpan = document.getElementById('year-display');
+    yearSpan.textContent = academicYear;
+    yearSpan.style.cursor = 'pointer';
+    yearSpan.style.textDecoration = 'underline';
     document.getElementById('logout-btn').style.display = 'inline-block';
   }
 
