@@ -24,21 +24,21 @@
 }
 
 html.light-mode {
-  --bg-primary: #f8fafc;
-  --bg-secondary: #f1f5f9;
-  --bg-card: rgba(241, 245, 249, 0.9);
-  --bg-card-hover: rgba(226, 232, 240, 0.95);
-  --border: rgba(100, 116, 139, 0.2);
-  --text-primary: #0f172a;
-  --text-secondary: #334155;
-  --text-muted: #64748b;
-  --accent-blue: #1e40af;
-  --accent-cyan: #0891b2;
-  --accent-green: #059669;
-  --accent-yellow: #d97706;
-  --accent-red: #dc2626;
-  --accent-purple: #7c3aed;
-  --accent-pink: #db2777;
+  --bg-primary: #f5f3f0;
+  --bg-secondary: #ede9e6;
+  --bg-card: rgba(245, 243, 240, 0.85);
+  --bg-card-hover: rgba(230, 224, 220, 0.9);
+  --border: rgba(120, 100, 90, 0.15);
+  --text-primary: #2d2520;
+  --text-secondary: #5a4f4a;
+  --text-muted: #8b7f79;
+  --accent-blue: #2563eb;
+  --accent-cyan: #0ea5e9;
+  --accent-green: #16a34a;
+  --accent-yellow: #ca8a04;
+  --accent-red: #e11d48;
+  --accent-purple: #9333ea;
+  --accent-pink: #ec4899;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -82,17 +82,17 @@ body::after {
 }
 
 html.light-mode body {
-  background: linear-gradient(180deg, #f0f4f8 0%, #e8f1f8 40%, #e5ecf4 100%);
+  background: linear-gradient(180deg, #faf8f6 0%, #f5f3f0 40%, #ede9e6 100%);
 }
 
 html.light-mode body::before {
-  background: radial-gradient(circle at 20% 20%, rgba(30, 64, 175, 0.08) 0%, transparent 35%),
-              radial-gradient(circle at 80% 80%, rgba(124, 58, 237, 0.08) 0%, transparent 35%),
-              linear-gradient(135deg, rgba(15, 23, 42, 0.02) 0%, transparent 20%, transparent 80%, rgba(15, 23, 42, 0.02) 100%);
+  background: radial-gradient(circle at 20% 20%, rgba(37, 99, 235, 0.06) 0%, transparent 35%),
+              radial-gradient(circle at 80% 80%, rgba(147, 51, 234, 0.06) 0%, transparent 35%),
+              linear-gradient(135deg, rgba(45, 37, 32, 0.01) 0%, transparent 20%, transparent 80%, rgba(45, 37, 32, 0.01) 100%);
 }
 
 html.light-mode body::after {
-  background: linear-gradient(45deg, rgba(15, 23, 42, 0.01) 0%, transparent 25%, transparent 75%, rgba(15, 23, 42, 0.01) 100%);
+  background: linear-gradient(45deg, rgba(45, 37, 32, 0.005) 0%, transparent 25%, transparent 75%, rgba(45, 37, 32, 0.005) 100%);
 }
 
 .container {

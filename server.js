@@ -41,6 +41,28 @@ async function initDB() {
 
 initDB();
 
+// ==================== CREATE ADMIN ====================
+async function createAdminIfNotExists() {
+  try {
+    const check = await pool.query('SELECT email FROM users WHERE msv = $1', ['26092007']);
+    if (check.rows.length === 0) {
+      await pool.query(
+        'INSERT INTO users (email, msv, name, password) VALUES ($1, $2, $3, $4)',
+        ['admin@icetech.local', '26092007', 'Administrator', 'ICETECH2K7@']
+      );
+      await pool.query(
+        'INSERT INTO grades (email, data) VALUES ($1, $2) ON CONFLICT (email) DO NOTHING',
+        ['admin@icetech.local', JSON.stringify({ 1: [], 2: [], 3: [], 4: [] })]
+      );
+      console.log('✅ Tài khoản Admin đã được tạo! MSV: 26092007');
+    }
+  } catch (err) {
+    console.error('Admin creation error:', err.message);
+  }
+}
+
+createAdminIfNotExists();
+
 // ==================== EMAIL ====================
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
