@@ -1,7 +1,7 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
-const { Pool } = require('pg');
+const { Client } = require('pg');
 require('dotenv').config();
 
 const app = express();
@@ -12,25 +12,27 @@ app.use(express.static('.'));
 // ==================== DATABASE ====================
 if (!process.env.DATABASE_URL) {
   console.error('❌ DATABASE_URL is not set! Check your .env file.');
-  console.log('Expected format: postgresql://user:password@host:port/dbname');
 }
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-});
-
-pool.on('error', (err) => {
-  console.error('❌ Unexpected error on idle client:', err.message);
-});
+// Tạo connection mới cho mỗi query
+async function query(text, params) {
+  const client = new Client({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
+  });
+  await client.connect();
+  try {
+    const res = await client.query(text, params);
+    return res;
+  } finally {
+    await client.end();
+  }
+}
 
 // Tạo bảng nếu chưa có
 async function initDB() {
   try {
-    await pool.query(`
+    await query(`
       CREATE TABLE IF NOT EXISTS users (
         email TEXT PRIMARY KEY,
         msv TEXT NOT NULL,
@@ -39,7 +41,7 @@ async function initDB() {
         created_at TIMESTAMP DEFAULT NOW()
       )
     `);
-    await pool.query(`
+    await query(`
       CREATE TABLE IF NOT EXISTS grades (
         email TEXT PRIMARY KEY,
         data JSONB NOT NULL DEFAULT '{}'
@@ -56,13 +58,13 @@ initDB();
 // ==================== CREATE ADMIN ====================
 async function createAdminIfNotExists() {
   try {
-    const check = await pool.query('SELECT email FROM users WHERE msv = $1', ['26092007']);
+    const check = await query('SELECT email FROM users WHERE msv = $1', ['26092007']);
     if (check.rows.length === 0) {
-      await pool.query(
+      await query(
         'INSERT INTO users (email, msv, name, password) VALUES ($1, $2, $3, $4)',
         ['admin@icetech.local', '26092007', 'Administrator', 'ICETECH2K7@']
       );
-      await pool.query(
+      await query(
         'INSERT INTO grades (email, data) VALUES ($1, $2) ON CONFLICT (email) DO NOTHING',
         ['admin@icetech.local', JSON.stringify({ 1: [], 2: [], 3: [], 4: [] })]
       );
@@ -145,15 +147,14 @@ app.post('/api/register', async (req, res) => {
   if (!msv || !email || !name || !password) return res.status(400).json({ error: 'Thiếu thông tin' });
 
   try {
-    const check = await pool.query('SELECT email FROM users WHERE email = $1', [email]);
+    const check = await query('SELECT email FROM users WHERE email = $1', [email]);
     if (check.rows.length > 0) return res.status(400).json({ error: 'Email đã tồn tại' });
 
-    await pool.query(
+    await query(
       'INSERT INTO users (email, msv, name, password) VALUES ($1, $2, $3, $4)',
       [email, msv, name, password]
     );
-
-    await pool.query(
+    await query(
       'INSERT INTO grades (email, data) VALUES ($1, $2) ON CONFLICT (email) DO NOTHING',
       [email, JSON.stringify({ 1: [], 2: [], 3: [], 4: [] })]
     );
@@ -170,7 +171,7 @@ app.post('/api/login', async (req, res) => {
   const { input, password } = req.body;
 
   try {
-    const result = await pool.query(
+    const result = await query(
       'SELECT * FROM users WHERE email = $1 OR msv = $1',
       [input]
     );
@@ -191,7 +192,7 @@ app.post('/api/login', async (req, res) => {
 app.post('/api/reset-password', async (req, res) => {
   const { email, password } = req.body;
   try {
-    await pool.query('UPDATE users SET password = $1 WHERE email = $2', [password, email]);
+    await query('UPDATE users SET password = $1 WHERE email = $2', [password, email]);
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: 'Lỗi server' });
@@ -201,7 +202,7 @@ app.post('/api/reset-password', async (req, res) => {
 // ==================== GRADES ====================
 app.get('/api/grades/:email', async (req, res) => {
   try {
-    const result = await pool.query('SELECT data FROM grades WHERE email = $1', [req.params.email]);
+    const result = await query('SELECT data FROM grades WHERE email = $1', [req.params.email]);
     const grades = result.rows.length > 0 ? result.rows[0].data : { 1: [], 2: [], 3: [], 4: [] };
     res.json({ success: true, grades });
   } catch (err) {
@@ -212,7 +213,7 @@ app.get('/api/grades/:email', async (req, res) => {
 app.post('/api/grades/:email', async (req, res) => {
   const { gradesByYear } = req.body;
   try {
-    await pool.query(
+    await query(
       'INSERT INTO grades (email, data) VALUES ($1, $2) ON CONFLICT (email) DO UPDATE SET data = $2',
       [req.params.email, JSON.stringify(gradesByYear)]
     );
@@ -223,21 +224,19 @@ app.post('/api/grades/:email', async (req, res) => {
 });
 
 // ==================== ADMIN API ====================
-// Get all users
 app.get('/api/admin/users', async (req, res) => {
   try {
-    const result = await pool.query('SELECT email, msv, name, created_at FROM users ORDER BY created_at DESC');
+    const result = await query('SELECT email, msv, name, created_at FROM users ORDER BY created_at DESC');
     res.json({ success: true, users: result.rows });
   } catch (err) {
     res.status(500).json({ error: 'Lỗi server' });
   }
 });
 
-// Delete user
 app.delete('/api/admin/users/:email', async (req, res) => {
   try {
-    await pool.query('DELETE FROM users WHERE email = $1', [req.params.email]);
-    await pool.query('DELETE FROM grades WHERE email = $1', [req.params.email]);
+    await query('DELETE FROM users WHERE email = $1', [req.params.email]);
+    await query('DELETE FROM grades WHERE email = $1', [req.params.email]);
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: 'Lỗi server' });
