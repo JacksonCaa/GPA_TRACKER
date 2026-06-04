@@ -1,5 +1,6 @@
 // ==================== THEME MANAGER ====================
 const THEME_KEY = 'app-theme';
+const YEAR_KEY = 'school-year';
 
 function initTheme() {
   const savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
@@ -28,6 +29,7 @@ function updateThemeButton() {
   if (!btn) return;
   const isLight = document.documentElement.classList.contains('light-mode');
   btn.textContent = isLight ? '☀️' : '🌙';
+  btn.title = isLight ? 'Chế độ tối' : 'Chế độ sáng';
 }
 
 function createThemeToggle() {
@@ -41,11 +43,28 @@ function createThemeToggle() {
   document.body.appendChild(btn);
 }
 
+// ==================== YEAR MANAGER ====================
+function saveYear() {
+  const yearInput = document.getElementById('year-input');
+  if (!yearInput) return;
+  const year = yearInput.value;
+  localStorage.setItem(YEAR_KEY, year);
+  alert('Đã lưu năm: ' + year);
+}
+
+function loadYear() {
+  const savedYear = localStorage.getItem(YEAR_KEY);
+  const yearInput = document.getElementById('year-input');
+  if (savedYear && yearInput) {
+    yearInput.value = savedYear;
+  }
+}
+
 // Initialize theme immediately (before DOMContentLoaded to prevent FOUC)
 initTheme();
 
 document.addEventListener('DOMContentLoaded', () => {
   createThemeToggle();
   updateThemeButton();
+  loadYear();
 });
-
