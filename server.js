@@ -246,6 +246,6 @@ app.delete('/api/admin/users/:email', async (req, res) => {
 
 // ==================== START ====================
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server chạy tại http://localhost:${PORT}`);
 });
