@@ -30,7 +30,13 @@ async function loadData() {
   if (!currentUser) return;
 
   try {
-    const res = await fetch(`${API_URL}/api/grades/${encodeURIComponent(currentUser)}`);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000); // 5 giây timeout
+
+    const res = await fetch(`${API_URL}/api/grades/${encodeURIComponent(currentUser)}`, {
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
     const data = await res.json();
     if (data.success) {
       gradesByYear = data.grades;
@@ -158,7 +164,6 @@ function renderGradeTable() {
   const gpa4 = totalCredits > 0 ? (totalWeighted4 / totalCredits) : 0;
   const cls = getClassification(gpa4);
 
-  // Tính TC tích lũy từ tất cả các năm
   let totalPassCredits = 0;
   let allFailCount = 0;
   Object.values(gradesByYear).forEach(yearGrades => {
@@ -396,9 +401,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('logout-btn').style.display = 'inline-block';
   }
 
-  await loadData();
-  renderGradeTable();
-  renderCalcSubjects();
+  try {
+    await loadData();
+  } catch (e) {
+    console.error('Init error:', e);
+  } finally {
+    renderGradeTable();
+    renderCalcSubjects();
+    hideAppLoader(); // Luôn tắt loader dù lỗi hay không
+  }
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => switchTab(btn.dataset.tab));
@@ -407,8 +418,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('chat-input').addEventListener('keydown', e => {
     if (e.key === 'Enter') sendMessage();
   });
-
-  hideAppLoader();
 });
 
 function hideAppLoader() {
