@@ -393,12 +393,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const userData = getCurrentUserData();
   if (userData) {
-    document.getElementById('user-info').textContent = `${userData.name} · MSV: ${userData.msv} · `;
+    const userInfo = document.getElementById('user-info');
     const yearSpan = document.getElementById('year-display');
-    yearSpan.textContent = academicYear;
-    yearSpan.style.cursor = 'pointer';
-    yearSpan.style.textDecoration = 'underline';
-    document.getElementById('logout-btn').style.display = 'inline-block';
+    const logoutBtn = document.getElementById('logout-btn');
+
+    if (userInfo) userInfo.textContent = `${userData.name} · MSV: ${userData.msv} · `;
+    if (yearSpan) {
+      yearSpan.textContent = academicYear;
+      yearSpan.style.cursor = 'pointer';
+      yearSpan.style.textDecoration = 'underline';
+    }
+    if (logoutBtn) logoutBtn.style.display = 'inline-block';
   }
 
   try {
