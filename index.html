@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi" style="background: linear-gradient(180deg, #0f172a 0%, #0b1120 40%, #111827 100%); margin: 0; padding: 0;">
+<html lang="vi" style="background: var(--bg-gradient); margin: 0; padding: 0;">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="ICE TECH - Đại học Thủy Lợi TLU. Theo dõi điểm, tính GPA, tra cứu quy chế.">
+  <meta name="description" content="GPA Tracker - Đại học Thủy Lợi TLU. Theo dõi điểm, tính GPA, tra cứu quy chế.">
   <meta name="application-name" content="ICE TECH">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="ICE TECH">
@@ -11,7 +11,17 @@
   <link rel="manifest" href="manifest.json">
   <title>ICE TECH</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>body { margin: 0; padding: 0; background: linear-gradient(180deg, #0f172a 0%, #0b1120 40%, #111827 100%); }</style>
+  <script>
+    // Enforce theme detection early to prevent flash of wrong theme
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    
+    // Check if user is logged in
+    if (localStorage.getItem('isLoggedIn') !== 'true') {
+      window.location.href = 'login.html';
+    }
+  </script>
+  <style>body { margin: 0; padding: 0; background: var(--bg-gradient); }</style>
   <link rel="stylesheet" href="styles.css">
   <style>
     .app-loader {
@@ -34,20 +44,25 @@
     }
 
     .loader-logo {
-      width: auto;
-      height: auto;
-      border-radius: 0;
-      background: none;
-      box-shadow: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 120px;
+      height: 120px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, rgba(59,130,246,0.9), rgba(139,92,246,0.85));
+      box-shadow: 0 32px 80px rgba(59,130,246,0.2);
+      display: grid;
+      place-items: center;
       position: relative;
-      overflow: visible;
+      overflow: hidden;
     }
 
     .loader-logo span {
-      display: none;
+      position: relative;
+      color: white;
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      text-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      animation: logoGlow 1.8s ease-in-out infinite;
     }
 
     @keyframes logoGlow {
@@ -82,34 +97,22 @@
   </style>
 </head>
 <body>
+  <!-- Theme Toggle Button -->
+  <button class="theme-toggle-btn" id="theme-toggle" aria-label="Đổi giao diện Sáng/Tối">
+    <!-- Sun Icon (for Light Mode) -->
+    <svg class="sun-icon" viewBox="0 0 24 24">
+      <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L18.36 16.95zM19.42 5.64c-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06c.39-.39.39-1.03 0-1.41zM7.05 18.01c-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06c.39-.39.39-1.03 0-1.41z"/>
+    </svg>
+    <!-- Moon Icon (for Dark Mode) -->
+    <svg class="moon-icon" viewBox="0 0 24 24">
+      <path d="M12.3 22h-.1c-5.5 0-10-4.5-10-10 0-4.8 3.5-8.9 8.2-9.8.6-.1 1.2.3 1.3.9.1.6-.3 1.2-.9 1.3-3.5.7-6 3.8-6 7.6 0 4.4 3.6 8 8 8 3.8 0 6.9-2.5 7.6-6 .1-.6.7-1 1.3-.9.6.1 1 .7.9 1.3-.9 4.7-5 8.2-9.8 8.2z"/>
+    </svg>
+  </button>
+
   <div class="app-loader" id="app-loader">
-    <div class="loader-logo" style="background: none; box-shadow: none;">
-      <svg width="90" height="90" viewBox="0 0 100 100" style="position: relative; z-index: 2; filter: drop-shadow(0 8px 16px rgba(100, 180, 220, 0.3));" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="iceGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:#e0f7ff;stop-opacity:1" />
-            <stop offset="50%" style="stop-color:#a8e6ff;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#64d9ff;stop-opacity:1" />
-          </linearGradient>
-          <filter id="frost">
-            <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="3" result="noise" />
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" />
-          </filter>
-        </defs>
-        <!-- Fox Body (Icy Blue) -->
-        <path d="M50 15 L65 35 L85 30 L75 45 L90 50 L75 55 L85 70 L65 65 L50 85 L35 65 L15 70 L25 55 L10 50 L25 45 L15 30 L35 35 Z" fill="url(#iceGrad)" filter="url(#frost)" stroke="rgba(100, 200, 255, 0.6)" stroke-width="0.5"/>
-        <!-- Ears -->
-        <path d="M35 28 L32 15 L40 25 Z" fill="url(#iceGrad)" stroke="rgba(100, 200, 255, 0.6)" stroke-width="0.5"/>
-        <path d="M65 28 L68 15 L60 25 Z" fill="url(#iceGrad)" stroke="rgba(100, 200, 255, 0.6)" stroke-width="0.5"/>
-        <!-- Eyes (Frost) -->
-        <circle cx="42" cy="45" r="3" fill="#e0f7ff" opacity="0.9"/>
-        <circle cx="58" cy="45" r="3" fill="#e0f7ff" opacity="0.9"/>
-        <!-- Nose (Orange accent) -->
-        <path d="M50 52 L48 58 L52 58 Z" fill="#ff8c42"/>
-      </svg>
-    </div>
+    <div class="loader-logo"><span>ICE</span></div>
     <div class="loader-spinner"></div>
-    <p class="loader-text">Loading...</p>
+    <p class="loader-text">Đang tải...</p>
   </div>
   <div class="container">
     <!-- Header with Gear Background -->
@@ -148,7 +151,7 @@
       </div>
 
       <div class="sub" id="user-info" style="position: relative; z-index: 2; margin-top: 18px; font-size: clamp(12px, 2vw, 14px);">MSSV: 26612/1194 · <span id="year-display" style="cursor:pointer;text-decoration:underline;" onclick="editYearAcademic()">2025-2026</span></div>
-      <button id="logout-btn" class="logout-btn" onclick="logout()" style="display:none; position: relative; z-index: 2; margin-top: 12px;">Đăng xuất</button>
+      <button id="logout-btn" class="logout-btn" onclick="logout()" style="display:inline-block; position: relative; z-index: 2; margin-top: 12px;">Đăng xuất</button>
     </div>
 
     <!-- Tabs -->
@@ -166,6 +169,7 @@
       <button class="year-btn" data-year="3" onclick="switchYear(3)">Năm 3</button>
       <button class="year-btn" data-year="4" onclick="switchYear(4)">Năm 4</button>
     </div>
+
     <!-- Tab 1: Bảng điểm -->
     <div id="tab-bangdiem" class="tab-content active">
       <div class="summary-grid">
@@ -385,7 +389,6 @@
     </div>
   </div>
 
-  <script src="theme.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
