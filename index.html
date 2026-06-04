@@ -1,120 +1,392 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="vi" style="background: linear-gradient(180deg, #0f172a 0%, #0b1120 40%, #111827 100%); margin: 0; padding: 0;">
 <head>
-<link rel="icon" href="data:,">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ICE TECH - Đại học Thủy Lợi TLU. Theo dõi điểm, tính GPA, tra cứu quy chế.">
+  <meta name="application-name" content="ICE TECH">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="ICE TECH">
+  <meta name="theme-color" content="#1f2937">
+  <link rel="manifest" href="manifest.json">
+  <title>ICE TECH</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>body { margin: 0; padding: 0; background: linear-gradient(180deg, #0f172a 0%, #0b1120 40%, #111827 100%); }</style>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .app-loader {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(15,23,42,1) 0%, rgba(17,24,39,0.95) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 20px;
+      z-index: 10000;
+      opacity: 1;
+      transition: opacity 0.8s ease-out;
+    }
 
-<style>
-body { background: #0a0e17; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; flex-direction: column; gap: 20px; font-family: sans-serif; }
+    .app-loader.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
 
-.loader-logo { position: relative; width: 130px; height: 170px; display: flex; align-items: flex-end; justify-content: center; }
+    .loader-logo {
+      width: auto;
+      height: auto;
+      border-radius: 0;
+      background: none;
+      box-shadow: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: visible;
+    }
 
-.leaf-group { position: absolute; bottom: 85px; left: 50%; transform: translateX(-50%); width: 0; height: 0; }
+    .loader-logo span {
+      display: none;
+    }
 
-.leaf {
-  position: absolute;
-  width: 9px;
-  height: 26px;
-  border-radius: 50% 50% 40% 40%;
-  background: linear-gradient(180deg, #ffffff 0%, #aaaaaa 100%);
-  transform-origin: bottom center;
-  animation: leafBounce 1.6s ease-in-out infinite;
-}
+    @keyframes logoGlow {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.15); text-shadow: 0 8px 40px rgba(59,130,246,0.4); }
+    }
 
-@keyframes leafBounce {
-  0%   { transform: rotate(var(--r)) translateY(0px) scaleY(1); }
-  20%  { transform: rotate(var(--r)) translateY(6px) scaleY(0.85); }
-  50%  { transform: rotate(var(--r)) translateY(-14px) scaleY(1.05); }
-  75%  { transform: rotate(var(--r)) translateY(-6px) scaleY(0.97); }
-  100% { transform: rotate(var(--r)) translateY(0px) scaleY(1); }
-}
+    .loader-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid rgba(255,255,255,0.15);
+      border-top-color: var(--accent-cyan);
+      border-radius: 50%;
+      animation: spin 1.2s linear infinite;
+    }
 
-.leaf:nth-child(1) { --r: 0deg;   left: -4px;  bottom: 0; animation-delay: 0s; }
-.leaf:nth-child(2) { --r: 20deg;  left: 9px;   bottom: 0; animation-delay: 0.1s; }
-.leaf:nth-child(3) { --r: 38deg;  left: 19px;  bottom: 0; animation-delay: 0.2s; }
-.leaf:nth-child(4) { --r: 55deg;  left: 25px;  bottom: 0; animation-delay: 0.3s; }
-.leaf:nth-child(5) { --r: 70deg;  left: 27px;  bottom: 0; animation-delay: 0.4s; }
-.leaf:nth-child(6) { --r: -20deg; left: -17px; bottom: 0; animation-delay: 0.1s; }
-.leaf:nth-child(7) { --r: -38deg; left: -27px; bottom: 0; animation-delay: 0.2s; }
-.leaf:nth-child(8) { --r: -55deg; left: -33px; bottom: 0; animation-delay: 0.3s; }
-.leaf:nth-child(9) { --r: -70deg; left: -35px; bottom: 0; animation-delay: 0.4s; }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
 
-.skull-wrap {
-  position: relative;
-  z-index: 2;
-  filter: drop-shadow(0 4px 20px rgba(255,255,255,0.25));
-}
+    .loader-text {
+      color: var(--text-secondary);
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      animation: textBlink 1.6s ease-in-out infinite;
+    }
 
-.heartbeat-svg { width: 160px; height: 40px; }
-.heartbeat-line {
-  fill: none;
-  stroke: #06b6d4;
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 300;
-  stroke-dashoffset: 300;
-  animation: drawLine 1.8s ease-in-out infinite;
-}
-@keyframes drawLine {
-  0%   { stroke-dashoffset: 300; opacity: 1; }
-  70%  { stroke-dashoffset: 0;   opacity: 1; }
-  90%  { stroke-dashoffset: 0;   opacity: 0.3; }
-  100% { stroke-dashoffset: 300; opacity: 0; }
-}
-</style>
+    @keyframes textBlink {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+  </style>
 </head>
 <body>
-
-<div class="loader-logo">
-  <div class="leaf-group">
-    <div class="leaf"></div><div class="leaf"></div><div class="leaf"></div>
-    <div class="leaf"></div><div class="leaf"></div><div class="leaf"></div>
-    <div class="leaf"></div><div class="leaf"></div><div class="leaf"></div>
+  <div class="app-loader" id="app-loader">
+    <div class="loader-logo" style="background: none; box-shadow: none;">
+      <svg width="90" height="90" viewBox="0 0 100 100" style="position: relative; z-index: 2; filter: drop-shadow(0 8px 16px rgba(100, 180, 220, 0.3));" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="iceGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#e0f7ff;stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#a8e6ff;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#64d9ff;stop-opacity:1" />
+          </linearGradient>
+          <filter id="frost">
+            <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="3" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" />
+          </filter>
+        </defs>
+        <!-- Fox Body (Icy Blue) -->
+        <path d="M50 15 L65 35 L85 30 L75 45 L90 50 L75 55 L85 70 L65 65 L50 85 L35 65 L15 70 L25 55 L10 50 L25 45 L15 30 L35 35 Z" fill="url(#iceGrad)" filter="url(#frost)" stroke="rgba(100, 200, 255, 0.6)" stroke-width="0.5"/>
+        <!-- Ears -->
+        <path d="M35 28 L32 15 L40 25 Z" fill="url(#iceGrad)" stroke="rgba(100, 200, 255, 0.6)" stroke-width="0.5"/>
+        <path d="M65 28 L68 15 L60 25 Z" fill="url(#iceGrad)" stroke="rgba(100, 200, 255, 0.6)" stroke-width="0.5"/>
+        <!-- Eyes (Frost) -->
+        <circle cx="42" cy="45" r="3" fill="#e0f7ff" opacity="0.9"/>
+        <circle cx="58" cy="45" r="3" fill="#e0f7ff" opacity="0.9"/>
+        <!-- Nose (Orange accent) -->
+        <path d="M50 52 L48 58 L52 58 Z" fill="#ff8c42"/>
+      </svg>
+    </div>
+    <div class="loader-spinner"></div>
+    <p class="loader-text">Loading...</p>
   </div>
-  <div class="skull-wrap">
-    <svg width="90" height="105" viewBox="0 0 90 105" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#ffffff"/>
-          <stop offset="100%" style="stop-color:#c0c0c0"/>
-        </linearGradient>
-      </defs>
+  <div class="container">
+    <!-- Header with Gear Background -->
+    <div class="header" style="position: relative; overflow: hidden; min-height: 280px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 30px; border-radius: 24px; background: linear-gradient(135deg, rgba(15,65,150,0.95), rgba(20,50,130,0.9)); backdrop-filter: blur(10px); border: 1px solid rgba(59,130,246,0.2);">
+      <!-- Gear Background Pattern -->
+      <svg style="position: absolute; top: -60px; left: -80px; width: 400px; height: 400px; opacity: 0.12;" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <g>
+          <circle cx="100" cy="100" r="70" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle cx="100" cy="100" r="50" fill="none" stroke="currentColor" stroke-width="2"/>
+          <g stroke="currentColor" stroke-width="1.5">
+            <path d="M 100 30 L 95 50 L 105 50 Z"/>
+            <path d="M 170 100 L 150 95 L 150 105 Z"/>
+            <path d="M 100 170 L 105 150 L 95 150 Z"/>
+            <path d="M 30 100 L 50 105 L 50 95 Z"/>
+          </g>
+        </g>
+      </svg>
+      <svg style="position: absolute; bottom: -40px; right: -100px; width: 380px; height: 380px; opacity: 0.1;" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <g>
+          <circle cx="100" cy="100" r="75" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle cx="100" cy="100" r="50" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <g stroke="currentColor" stroke-width="1.5">
+            <path d="M 100 25 L 94 45 L 106 45 Z"/>
+            <path d="M 175 100 L 155 94 L 155 106 Z"/>
+            <path d="M 100 175 L 106 155 L 94 155 Z"/>
+            <path d="M 25 100 L 45 106 L 45 94 Z"/>
+          </g>
+        </g>
+      </svg>
 
-      <ellipse cx="45" cy="40" rx="32" ry="35" fill="url(#sg)"/>
+      <!-- Content -->
+      <div style="position: relative; z-index: 2; text-align: center;">
+        <div class="badge" style="margin-bottom: 14px;">ĐẠI HỌC THỦY LỢI - TLU</div>
+        <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(28px, 6vw, 42px); font-weight: 800; background: linear-gradient(135deg, #ffffff, #a0d9ff); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0 0 8px 0; letter-spacing: -0.5px;">GPA TRACKER</h1>
+        <p style="font-family: 'Poppins', sans-serif; font-size: clamp(14px, 3vw, 18px); color: #06b6d4; font-weight: 600; letter-spacing: 1px; margin: 0; text-transform: uppercase;">Kiến Tạo Tương Lai</p>
+      </div>
 
-      <path d="M22,65 L22,88 Q22,95 29,95 L61,95 Q68,95 68,88 L68,65 Z" fill="#dddddd"/>
-      <line x1="22" y1="75" x2="68" y2="75" stroke="#aaa" stroke-width="0.8" opacity="0.5"/>
+      <div class="sub" id="user-info" style="position: relative; z-index: 2; margin-top: 18px; font-size: clamp(12px, 2vw, 14px);">MSSV: 26612/1194 · <span id="year-display" style="cursor:pointer;text-decoration:underline;" onclick="editYearAcademic()">2025-2026</span></div>
+      <button id="logout-btn" class="logout-btn" onclick="logout()" style="display:none; position: relative; z-index: 2; margin-top: 12px;">Đăng xuất</button>
+    </div>
 
-      <rect x="24" y="76" width="8" height="14" rx="2.5" fill="#1a1a2e"/>
-      <rect x="35" y="76" width="8" height="14" rx="2.5" fill="#1a1a2e"/>
-      <rect x="46" y="76" width="8" height="14" rx="2.5" fill="#1a1a2e"/>
-      <rect x="57" y="76" width="8" height="14" rx="2.5" fill="#1a1a2e"/>
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="bangdiem">Bảng điểm</button>
+      <button class="tab-btn" data-tab="tinhgpa">Tính GPA</button>
+      <button class="tab-btn" data-tab="thangdiem">Thang điểm</button>
+      <button class="tab-btn" data-tab="tailieu">Tài liệu</button>
+    </div>
 
-      <ellipse cx="31" cy="38" rx="10" ry="11" fill="#1a1a2e"/>
-      <ellipse cx="59" cy="38" rx="10" ry="11" fill="#1a1a2e"/>
+    <!-- Year Selector -->
+    <div class="year-selector">
+      <button class="year-btn active" data-year="1" onclick="switchYear(1)">Năm 1</button>
+      <button class="year-btn" data-year="2" onclick="switchYear(2)">Năm 2</button>
+      <button class="year-btn" data-year="3" onclick="switchYear(3)">Năm 3</button>
+      <button class="year-btn" data-year="4" onclick="switchYear(4)">Năm 4</button>
+    </div>
 
-      <line x1="14" y1="48" x2="26" y2="44" stroke="#999" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
-      <line x1="76" y1="48" x2="64" y2="44" stroke="#999" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+    <!-- Tab 1: Bảng điểm -->
+    <div id="tab-bangdiem" class="tab-content active">
+      <div class="summary-grid">
+        <div class="summary-card blue">
+          <div class="label">GPA Hệ 10</div>
+          <div class="value" id="gpa10-val">0.00</div>
+          <div class="desc" id="gpa10-desc"></div>
+        </div>
+        <div class="summary-card cyan">
+          <div class="label">GPA Hệ 4</div>
+          <div class="value" id="gpa4-val">0.00</div>
+          <div class="desc" id="gpa4-desc"></div>
+        </div>
+        <div class="summary-card green">
+          <div class="label">TC Tích Lũy</div>
+          <div class="value" id="tc-val">0</div>
+          <div class="desc" id="tc-desc"></div>
+        </div>
+        <div class="summary-card red">
+          <div class="label">Môn Không Đạt</div>
+          <div class="value" id="fail-val">0</div>
+          <div class="desc" id="fail-desc"></div>
+        </div>
+      </div>
 
-      <path d="M30,18 Q45,14 60,18" stroke="#bbb" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+      <div class="section-title" id="grade-title">Chi tiết – Năm Nhất (2025-2026)</div>
+      <table class="grade-table">
+        <thead>
+          <tr><th>Mã HP</th><th>Môn học</th><th>TC</th><th>Điểm</th><th>Loại</th><th>KQ</th><th></th></tr>
+        </thead>
+        <tbody id="grade-tbody"></tbody>
+      </table>
+      <button class="add-subject-btn" onclick="addSubjectToYear()">+ Thêm môn học</button>
+    </div>
 
-      <path d="M41,53 L45,60 L49,53 L45,50 Z" fill="#1a1a2e"/>
+    <!-- Tab 2: Tính GPA -->
+    <div id="tab-tinhgpa" class="tab-content">
+      <div class="info-banner">
+        Nhập điểm dự kiến cho môn chưa có. Bấm <strong>+ Thêm môn</strong> để thêm bất kỳ môn nào khác – kỳ 2, học lại, v.v. Tín chỉ có thể chọn 1-4. GPA tính <strong>cộng dồn</strong> với điểm kỳ này.
+      </div>
 
-      <path d="M45,8 L43,20 L47,30 L44,38" stroke="#aaa" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+      <!-- Mini Calculator -->
+      <div class="calc-container">
+        <div class="scale-box">
+          <h3>⚡ Máy tính nhanh xếp loại</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px;">
+            <div class="field-group">
+              <label>Nhập điểm (0-10)</label>
+              <input type="number" id="quick-score" min="0" max="10" step="0.1" placeholder="VD: 8.5" oninput="updateQuickCalc()">
+            </div>
+            <div class="field-group">
+              <label>Xếp loại</label>
+              <div id="quick-grade" style="padding:10px;background:rgba(55,65,81,0.3);border-radius:6px;text-align:center;font-weight:600;color:var(--text-muted);">-</div>
+            </div>
+          </div>
+          <div style="margin-top:12px;padding:12px;background:rgba(139,92,246,0.1);border-radius:6px;border-left:3px solid var(--accent-purple);">
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">Thang điểm hệ 4</div>
+            <div id="quick-scale" style="font-size:18px;font-weight:700;color:var(--accent-purple);">0.0</div>
+          </div>
+        </div>
+      </div>
 
-      <path d="M14,35 Q10,40 14,45" stroke="#bbb" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.5"/>
-      <path d="M76,35 Q80,40 76,45" stroke="#bbb" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.5"/>
-    </svg>
+      <div class="section-title">Danh sách môn cần nhập điểm</div>
+      <div id="calc-subjects"></div>
+      <button class="add-btn" onclick="addSubject()">+ Thêm môn khác</button>
+      <button class="calc-btn" onclick="calculateGPA()">Tính GPA</button>
+      <div id="gpa-result" class="gpa-result"></div>
+    </div>
+
+    <!-- Tab 3: Thang điểm -->
+    <div id="tab-thangdiem" class="tab-content">
+      <div class="scale-grid">
+        <div class="scale-box">
+          <h3>Thang Điểm</h3>
+          <div class="scale-row"><span>8.5 – 10</span><span class="grade-badge A">A</span><span>4.0</span></div>
+          <div class="scale-row"><span>7.0 – 8.4</span><span class="grade-badge B">B</span><span>3.0</span></div>
+          <div class="scale-row"><span>5.5 – 6.9</span><span class="grade-badge C">C</span><span>2.0</span></div>
+          <div class="scale-row"><span>4.0 – 5.4</span><span class="grade-badge D">D</span><span>1.0</span></div>
+          <div class="scale-row"><span>&lt; 4.0</span><span class="grade-badge F">F</span><span>0</span></div>
+        </div>
+        <div class="scale-box">
+          <h3>Xếp Loại</h3>
+          <div class="scale-row"><span class="class-label xuat-sac">Xuất sắc</span><span>3.60 – 4.00</span></div>
+          <div class="scale-row"><span class="class-label gioi">Giỏi</span><span>3.20 – 3.59</span></div>
+          <div class="scale-row"><span class="class-label kha">Khá</span><span>2.50 – 3.19</span></div>
+          <div class="scale-row"><span class="class-label tb-kha">TB khá</span><span>2.30 – 2.49</span></div>
+          <div class="scale-row"><span class="class-label tb">Trung bình</span><span>2.00 – 2.29</span></div>
+          <div class="scale-row"><span class="class-label tb-yeu">TB yếu</span><span>1.50 – 1.99</span></div>
+          <div class="scale-row"><span class="class-label yeu">Yếu</span><span>1.00 – 1.49</span></div>
+          <div class="scale-row"><span class="class-label kem">Kém</span><span>&lt; 1.00</span></div>
+        </div>
+      </div>
+      <div class="notes-box">
+        <h3>Lưu ý quan trọng</h3>
+        <ul>
+          <li>Môn F <strong>vẫn tính</strong> vào GPA (điểm hệ 4 = 0), không bị loại ra</li>
+          <li>Khi học lại, lấy điểm <strong>cao nhất</strong> – không giảm nếu học lại thấp hơn</li>
+          <li>Cảnh báo học tập nếu TC môn F tích lũy vượt <strong>24 TC</strong></li>
+          <li>Học lại từ lần 2 trở đi phải đóng <strong>100% học phí</strong></li>
+          <li>Không có <strong>thi lại</strong>, nếu không đạt phải học lại</li>
+          <li>HP GDTC (thể chất): chỉ yêu cầu Đạt (≥ 5.0, ký hiệu <strong>P</strong>)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Tab 4: Tài liệu -->
+    <div id="tab-tailieu" class="tab-content">
+      <div class="scale-box" style="margin-bottom:16px">
+        <h3>📐 Công thức tính điểm trung bình</h3>
+        <div style="text-align:center;padding:20px;font-size:20px;font-weight:700;color:var(--accent-cyan);">
+          A = Σ(aᵢ × xᵢ) / Σ(xᵢ)
+        </div>
+        <ul style="list-style:none;padding:0;">
+          <li style="padding:6px 0;font-size:13px;color:var(--text-secondary)"><strong style="color:var(--accent-cyan)">A</strong>: Điểm trung bình chung học kỳ hoặc tích lũy, làm tròn đến 2 chữ số thập phân</li>
+          <li style="padding:6px 0;font-size:13px;color:var(--text-secondary)"><strong style="color:var(--accent-cyan)">aᵢ</strong>: Điểm của học phần thứ i (không tính các môn chứng chỉ)</li>
+          <li style="padding:6px 0;font-size:13px;color:var(--text-secondary)"><strong style="color:var(--accent-cyan)">xᵢ</strong>: Số tín chỉ của học phần thứ i</li>
+          <li style="padding:6px 0;font-size:13px;color:var(--text-secondary)"><strong style="color:var(--accent-cyan)">n</strong>: Tổng số học phần trong học kỳ hoặc từ đầu khóa học</li>
+        </ul>
+      </div>
+
+      <div class="scale-box" style="margin-bottom:16px">
+        <h3>📋 Đánh giá điểm học phần</h3>
+        <ul style="list-style:none;padding:0;">
+          <li style="padding:8px 0;font-size:13px;color:var(--text-secondary);border-bottom:1px solid rgba(55,65,81,0.3)">
+            <strong>Loại phân mức:</strong> Điểm HP làm tròn đến 1 chữ số thập phân, quy đổi sang thang điểm 4 và chữ
+          </li>
+          <li style="padding:8px 0;font-size:13px;color:var(--text-secondary);border-bottom:1px solid rgba(55,65,81,0.3)">
+            Nếu <strong style="color:var(--accent-red)">KHÔNG ĐẠT</strong> thì phải <strong>học lại</strong>
+          </li>
+          <li style="padding:8px 0;font-size:13px;color:var(--text-secondary);border-bottom:1px solid rgba(55,65,81,0.3)">
+            <strong style="color:var(--accent-red)">Không có THI LẠI</strong>
+          </li>
+          <li style="padding:8px 0;font-size:13px;color:var(--text-secondary)">
+            <strong>HP GDTC</strong> (không phân mức): chỉ yêu cầu Đạt. Điểm từ 5.0 trở lên = <strong style="color:var(--accent-green)">P (Đạt)</strong>
+          </li>
+        </ul>
+      </div>
+
+      <div class="scale-box" style="margin-bottom:16px">
+        <h3>🔄 Quy định học lại khi không đạt (Điểm F)</h3>
+        <ul style="list-style:none;padding:0;">
+          <li style="padding:8px 0;font-size:13px;color:var(--text-secondary);border-bottom:1px solid rgba(55,65,81,0.3)">
+            <strong>HP bắt buộc:</strong> Sinh viên phải đăng ký học lại chính HP đó hoặc học một <strong>HP thay thế tương đương</strong>
+          </li>
+          <li style="padding:8px 0;font-size:13px;color:var(--text-secondary);border-bottom:1px solid rgba(55,65,81,0.3)">
+            <strong>HP tự chọn:</strong> Có thể học lại chính HP đó hoặc chọn HP tự chọn khác thay thế
+          </li>
+          <li style="padding:8px 0;font-size:13px;color:var(--text-secondary);border-bottom:1px solid rgba(55,65,81,0.3)">
+            <strong>Quy tắc thay thế: Điểm cao nhất</strong> – Là điểm công nhận cuối cùng. Nếu học lại mà điểm thấp hơn → vẫn giữ điểm cao nhất
+          </li>
+          <li style="padding:8px 0;font-size:13px;color:var(--text-secondary);border-bottom:1px solid rgba(55,65,81,0.3)">
+            <strong>Học phí:</strong> Học lại từ lần 2 trở đi phải nộp <strong style="color:var(--accent-red)">100% học phí</strong>
+          </li>
+          <li style="padding:8px 0;font-size:13px;color:var(--text-secondary)">
+            <strong style="color:var(--accent-red)">Cảnh báo:</strong> Nếu tổng TC môn F tích lũy từ đầu khóa vượt quá <strong>24 tín chỉ</strong> → bị cảnh báo kết quả học tập
+          </li>
+        </ul>
+      </div>
+
+      <div class="scale-box" style="margin-bottom:16px">
+        <h3>⏰ Khung thời gian học trong ngày</h3>
+        <table class="grade-table" style="border-spacing:0 4px">
+          <thead><tr><th>Buổi</th><th>Tiết</th><th>Thời gian</th></tr></thead>
+          <tbody>
+            <tr><td rowspan="6" style="font-weight:700;color:var(--accent-cyan)">Sáng</td><td>1</td><td>07:00 - 07:50</td></tr>
+            <tr><td>2</td><td>07:55 - 08:45</td></tr>
+            <tr><td>3</td><td>08:50 - 09:40</td></tr>
+            <tr><td>4</td><td>09:45 - 10:35</td></tr>
+            <tr><td>5</td><td>10:40 - 11:30</td></tr>
+            <tr><td>6</td><td>11:35 - 12:25</td></tr>
+            <tr><td rowspan="6" style="font-weight:700;color:var(--accent-yellow)">Chiều</td><td>7</td><td>12:55 - 13:45</td></tr>
+            <tr><td>8</td><td>13:50 - 14:40</td></tr>
+            <tr><td>9</td><td>14:45 - 15:35</td></tr>
+            <tr><td>10</td><td>15:40 - 16:30</td></tr>
+            <tr><td>11</td><td>16:35 - 17:25</td></tr>
+            <tr><td>12</td><td>17:30 - 18:20</td></tr>
+            <tr><td rowspan="3" style="font-weight:700;color:var(--accent-purple)">Tối</td><td>13</td><td>18:50 - 19:40</td></tr>
+            <tr><td>14</td><td>19:45 - 20:35</td></tr>
+            <tr><td>15</td><td>20:40 - 21:30</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="scale-box">
+        <h3>📝 Cải thiện điểm (Học phần B, C, D)</h3>
+        <ul style="list-style:none;padding:0;">
+          <li style="padding:8px 0;font-size:13px;color:var(--text-secondary);border-bottom:1px solid rgba(55,65,81,0.3)">
+            Sinh viên có điểm <strong>B, C, D</strong> được phép đăng ký học cải thiện điểm
+          </li>
+          <li style="padding:8px 0;font-size:13px;color:var(--text-secondary);border-bottom:1px solid rgba(55,65,81,0.3)">
+            <strong>Quy tắc:</strong> Luôn lấy <strong style="color:var(--accent-green)">điểm cao nhất</strong> – nếu học lại mà điểm thấp hơn lần đầu, nhà trường vẫn giữ lại điểm cao nhất cho bạn
+          </li>
+          <li style="padding:8px 0;font-size:13px;color:var(--text-secondary)">
+            Điểm trung bình: Điểm của tất cả các lần học (bao gồm cả lần bị F) đều được ghi vào bảng điểm kết quả học tập theo học kỳ, năm học
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
-</div>
 
-<svg class="heartbeat-svg" viewBox="0 0 160 40" xmlns="http://www.w3.org/2000/svg">
-  <polyline class="heartbeat-line"
-    points="0,20 20,20 28,20 33,5 38,35 43,10 48,28 53,20 80,20 88,20 93,5 98,35 103,10 108,28 113,20 160,20"/>
-</svg>
+  <!-- Chatbot -->
+  <button class="chat-toggle" id="chat-toggle" onclick="toggleChat()">💬</button>
+  <div class="chat-window" id="chat-window">
+    <div class="chat-header">
+      <div class="avatar">🤖</div>
+      <div class="info">
+        <h4>TLU Bot</h4>
+        <span>Hỏi đáp quy chế học vụ</span>
+      </div>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <div class="msg bot">Xin chào! 👋 Tôi là TLU Bot. Tôi có thể giúp bạn về:<br>• Thang điểm & xếp loại<br>• Công thức tính GPA<br>• Quy định học lại<br>• Cảnh báo học tập<br>• Khung giờ học<br><br>Hãy hỏi tôi bất cứ điều gì! 😊</div>
+    </div>
+    <div class="chat-input-area">
+      <input type="text" id="chat-input" placeholder="Hỏi về quy chế, thang điểm...">
+      <button onclick="sendMessage()">➤</button>
+    </div>
+  </div>
 
+  <script src="theme.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
-
-```
