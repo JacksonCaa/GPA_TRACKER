@@ -6,6 +6,50 @@ let currentYear = 1;
 let gradesByYear = { 1: [], 2: [], 3: [], 4: [] };
 let academicYear = localStorage.getItem('academicYear') || '2025-2026';
 
+// ==================== ĐỒNG HỒ VN UTC+7 ====================
+function updateVnClock() {
+  const now = new Date();
+  // Lấy giờ UTC+7 bất kể múi giờ thiết bị
+  const vnOffset = 7 * 60; // phút
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+  const vnTime = new Date(utc + vnOffset * 60000);
+
+  const days = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
+  const dayName = days[vnTime.getDay()];
+
+  const h = String(vnTime.getHours()).padStart(2, '0');
+  const m = String(vnTime.getMinutes()).padStart(2, '0');
+  const s = String(vnTime.getSeconds()).padStart(2, '0');
+
+  const d = vnTime.getDate();
+  const mo = vnTime.getMonth() + 1;
+  const y = vnTime.getFullYear();
+
+  const timeEl = document.getElementById('vn-clock-time');
+  const dateEl = document.getElementById('vn-clock-date');
+
+  if (timeEl) timeEl.textContent = `${h}:${m}:${s}`;
+  if (dateEl) dateEl.textContent = `${dayName}, ${d} tháng ${mo} năm ${y}`;
+
+  return vnTime; // trả về để dùng tính năm học
+}
+
+// Tính năm học dựa trên năm VN hiện tại + offset so với năm nhất
+// academicYear dạng "2025-2026" → startYear = 2025
+function getAcademicYearForGrade(gradeLevel) {
+  const parts = academicYear.split('-');
+  const startYear = parseInt(parts[0]);
+  if (isNaN(startYear)) return academicYear;
+  const offset = gradeLevel - 1; // năm 1 = +0, năm 2 = +1, v.v.
+  return `${startYear + offset}-${startYear + offset + 1}`;
+}
+
+// Khởi động đồng hồ
+function startVnClock() {
+  updateVnClock();
+  setInterval(updateVnClock, 1000);
+}
+
 // ==================== LOGIN CHECK ====================
 function checkLogin() {
   const currentUser = localStorage.getItem('currentUser');
@@ -31,7 +75,7 @@ async function loadData() {
 
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000); // 5 giây timeout
+    const timeout = setTimeout(() => controller.abort(), 5000);
 
     const res = await fetch(`${API_URL}/api/grades/${encodeURIComponent(currentUser)}`, {
       signal: controller.signal
@@ -114,7 +158,9 @@ function renderGradeTable() {
   const yearNames = { 1: 'Nhất', 2: 'Hai', 3: 'Ba', 4: 'Bốn' };
   const titleEl = document.getElementById('grade-title');
 
-  titleEl.textContent = `Chi tiết – Năm ${yearNames[currentYear]} (${academicYear})`;
+  // Năm học tự động theo năm học được chọn
+  const yearLabel = getAcademicYearForGrade(currentYear);
+  titleEl.textContent = `Chi tiết – Năm ${yearNames[currentYear]} (${yearLabel})`;
 
   let totalWeighted10 = 0, totalWeighted4 = 0, totalCredits = 0;
   let failCount = 0, passCredits = 0;
@@ -378,7 +424,7 @@ function escapeHtml(text) {
 
 // ==================== CHỈNH SỬA NĂM HỌC ====================
 function editYearAcademic() {
-  const newYear = prompt('Nhập năm học (VD: 2026-2027):', academicYear);
+  const newYear = prompt('Nhập năm học năm 1 (VD: 2025-2026):', academicYear);
   if (newYear && newYear.trim()) {
     academicYear = newYear.trim();
     localStorage.setItem('academicYear', academicYear);
@@ -391,19 +437,21 @@ function editYearAcademic() {
 document.addEventListener('DOMContentLoaded', async () => {
   if (!checkLogin()) return;
 
+  // Khởi động đồng hồ VN ngay lập tức
+  startVnClock();
+
   const userData = getCurrentUserData();
   if (userData) {
     const userInfo = document.getElementById('user-info');
     const yearSpan = document.getElementById('year-display');
     const logoutBtn = document.getElementById('logout-btn');
 
-    if (userInfo) userInfo.textContent = `${userData.name} · MSV: ${userData.msv} · `;
-    if (yearSpan) {
-      yearSpan.textContent = academicYear;
-      yearSpan.style.cursor = 'pointer';
-      yearSpan.style.textDecoration = 'underline';
-    }
+    if (userInfo) userInfo.innerHTML = `${userData.name} · MSV: ${userData.msv} · <span id="year-display" style="cursor:pointer;text-decoration:underline;" onclick="editYearAcademic()">${academicYear}</span>`;
     if (logoutBtn) logoutBtn.style.display = 'inline-block';
+  } else {
+    // Không có userData, vẫn cập nhật year-display
+    const yearSpan = document.getElementById('year-display');
+    if (yearSpan) yearSpan.textContent = academicYear;
   }
 
   try {
@@ -413,7 +461,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   } finally {
     renderGradeTable();
     renderCalcSubjects();
-    hideAppLoader(); // Luôn tắt loader dù lỗi hay không
+    hideAppLoader();
   }
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
